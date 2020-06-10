@@ -1,10 +1,13 @@
-FROM node:10
+FROM node:alpine
 
 WORKDIR /app
 
-COPY package.json package-lock.json /app/
+COPY package.json yarn.lock /app/
 RUN yarn install
 
 COPY . .
 
 RUN yarn run prod:build
+
+ENTRYPOINT ["yarn", "run"]
+CMD ["prod:start"]
