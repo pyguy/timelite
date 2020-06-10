@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: timelite
+  name: timelite
+  namespace: hobby 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: timelite
+  template:
+    metadata:
+      labels:
+        app: timelite
+    spec:
+      containers:
+      - image: pyguy/timelite
+        imagePullPolicy: IfNotPresent
+        name: timelite
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: timelite-web-ui
+  namespace: hobby 
+spec:
+  selector:
+    app: timelite
+  ports:
+  - name: web
+    port: 80
+    targetPort: 80
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: timelite-web-ui
+  namespace: hobby 
+spec:
+  rules:
+  - host: timelite.my.hobby
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: timelite-web-ui
+          servicePort: web
